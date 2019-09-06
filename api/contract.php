@@ -17,6 +17,16 @@ switch ($method) {
     $due = $_GET['due'];
     $sql = "select * from agen_dbs" . ($due ? " where due=\"$due\"" : "");
     break;
+  case 'POST':
+    $temp = json_decode(file_get_contents('php://input'), true);
+    print_r($temp);
+    $due = $temp["due"];
+    $time = $temp["time"];
+    $who = $temp["who"];
+    $content = $temp["content"];
+    $team = $temp["team"];
+    $sql = "INSERT INTO agen_dbs (name, content, due, team, time) VALUES ('$who', '$content', '$due', '$team', '$time')";
+    break;
 }
 
 $result = mysqli_query($con, $sql);
@@ -34,9 +44,12 @@ if ($method == 'GET') {
   }
   echo json_encode($myArray);
 
-} else {
+} 
+elseif ($method == 'POST') {
+  echo json_encode($result);
+} 
+else {
   echo mysqli_affected_rows($con);
 }
 
-$result->close();
 $con->close();
